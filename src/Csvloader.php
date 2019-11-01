@@ -4,18 +4,30 @@ namespace bagduch\blackpepper;
 
 use bagduch\blackpepper\lib\AbstractCompany;
 use bagduch\blackpepper\lib\StorageInterface;
-use bagduch\blackpepper\lib\validation\Validation;
+use bagduch\blackpepper\lib\helper\Validation;
+use bagduch\blackpepper\lib\helper\LoadDirectory;
+use bagduch\blackpepper\lib\helper\Sort;
 
 class Csvloader implements StorageInterface
 {
-    use Validation;
-    protected $filePath;
+    use Validation, LoadDirectory, Sort;
+    protected $filePath = [];
     protected $data = [];
 
-    public function __construct($filePath)
+    public function __construct($filePath = "storage", $filename = "")
     {
-        $this->validateCsv($filePath);
-        $this->filePath = $filePath;
+        if ($filename == "") {
+            $files = $this->loadDirectCsv($filePath);
+            foreach ($files as $file) {
+                $this->validateFile($file);
+                $this->filePath[] = $file;
+            }
+        } else {
+            $file = $filePath . "/" . $filename;
+            $this->validateFile($file);
+            $this->filePath[] = $file;
+        }
+
         $this->load();
 
     }
@@ -23,12 +35,14 @@ class Csvloader implements StorageInterface
     public function load()
     {
         // TODO: Implement load() method.
-        if (($handle = fopen($this->filePath, "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                $company = new Company($data[0], $data[1], $data[2]);
-                $this->data[strtolower($company->getName()[0])][] = $company;
+        foreach ($this->filePath as $filepath) {
+            if (($handle = fopen($filepath, "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    $company = new Company($data[0], $data[1], $data[2]);
+                    $this->data[strtolower($company->getName()[0])][] = $company;
+                }
+                fclose($handle);
             }
-            fclose($handle);
         }
     }
 
@@ -42,13 +56,8 @@ class Csvloader implements StorageInterface
 
     public function sort()
     {
-        $alphas = range('A', 'Z', 2);
-
-        foreach ($this->data as $row) {
-
-        }
-
         // TODO: Implement sort() method.
+        $this->data = $this->sortByAlpha($this->data, 2);
     }
 
     public function isEmpty()

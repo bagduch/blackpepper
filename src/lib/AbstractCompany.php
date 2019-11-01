@@ -2,7 +2,7 @@
 
 namespace bagduch\blackpepper\lib;
 
-use bagduch\blackpepper\lib\validation\Validation;
+use bagduch\blackpepper\lib\helper\Validation;
 
 abstract class AbstractCompany
 {

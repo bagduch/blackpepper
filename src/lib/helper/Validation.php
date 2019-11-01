@@ -1,6 +1,6 @@
 <?php
 
-namespace bagduch\blackpepper\lib\validation;
+namespace bagduch\blackpepper\lib\helper;
 
 trait Validation
 {
@@ -16,9 +16,11 @@ trait Validation
 
     }
 
-    public function validateCsv($file)
+    public function validateFile($file)
     {
-
+        if (!is_file($file)) {
+            throw new \Exception('Invalid file' . $file);
+        }
     }
 
 }
