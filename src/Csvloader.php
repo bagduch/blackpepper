@@ -14,7 +14,7 @@ class Csvloader implements StorageInterface
 
     public function __construct($filePath)
     {
-        $this->Validation($filePath);
+        $this->validateCsv($filePath);
         $this->filePath = $filePath;
         $this->load();
 
@@ -26,7 +26,7 @@ class Csvloader implements StorageInterface
         if (($handle = fopen($this->filePath, "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                 $company = new Company($data[0], $data[1], $data[2]);
-                $data[$company->getName()][] = $company;
+                $this->data[strtolower($company->getName()[0])][] = $company;
             }
             fclose($handle);
         }
@@ -35,12 +35,18 @@ class Csvloader implements StorageInterface
     public function get()
     {
         // TODO: Implement get() method.
+        if (!$this->isEmpty())
+            $this->sort();
         return $this->data;
     }
 
     public function sort()
     {
-        $alphas = range('A', 'Z');
+        $alphas = range('A', 'Z', 2);
+
+        foreach ($this->data as $row) {
+
+        }
 
         // TODO: Implement sort() method.
     }
