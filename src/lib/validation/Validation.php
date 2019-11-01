@@ -15,4 +15,10 @@ trait Validation
     {
 
     }
+
+    public function validateCsv($file)
+    {
+
+    }
+
 }
