@@ -7,7 +7,11 @@ trait LoadDirectory
 
     public function loadDirectCsv($path)
     {
-        $files = glob($path . "/*.csv");
+        if ($path == "") {
+            $files = glob("*.csv");
+        } else {
+            $files = glob($path . "/*.csv");
+        }
         return $files;
     }
 
